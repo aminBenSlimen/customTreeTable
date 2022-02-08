@@ -1,0 +1,123 @@
+<div class="overflow-x-auto">
+  <div
+    class="min-w-screen min-h-screen flex items-center justify-center bg-gray-100 font-sans overflow-hidden"
+  >
+    <div class="w-full lg:w-5/6">
+      {{ level }}
+      <div class="bg-white shadow-md rounded mt-6">
+        <div
+          (click)="
+            decrementLevel(
+              level >= 3
+                ? getSelected(level3).title
+                : level >= 2
+                ? getSelected(level2).title
+                : getSelected(level1).title
+            )
+          "
+          class="text-center text-4xl text-red-500 font-bold cursor-pointer py-5"
+        >
+          <span *ngIf="level >= 3">{{
+            getSelected(level3).title + " - "
+          }}</span>
+          <span *ngIf="level >= 2">{{
+            getSelected(level2).title + " - "
+          }}</span>
+          <span *ngIf="level >= 1">{{ getSelected(level1).title }}</span>
+          <span *ngIf="level == 0">Par année</span>
+        </div>
+        <div class="flex items-center justify-center overflow-auto p-8 gap-4">
+          <div
+            (click)="selectParentHeader(parentHeader)"
+            *ngFor="let parentHeader of _level2"
+            class="transition-all"
+            [class]="
+              configs.parentHeadersClass +
+              (parentHeader.selected
+                ? ' ' + configs.parentHeadersClassSelected
+                : ' bg-gray-200 text-gray-700')
+            "
+          >
+            {{ parentHeader.title }}
+          </div>
+        </div>
+        <table [class]="configs.tableClass">
+          <thead>
+            <tr [class]="configs.headerClass">
+              <th></th>
+              <th
+                *ngFor="let header of _level3"
+                class="py-3 px-6 text-left"
+                (click)="incrementLevel(header.title)"
+              >
+                {{ header.title }}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600 text-sm font-light">
+            <ng-container *ngFor="let row of dataSource; index as i">
+              <tr
+                (click)="row.expanded = expandCollapse(row.expanded)"
+                [class]="
+                  (i % 2 ? 'bg-gray-50 ' : 'bg-white ') +
+                  configs.RowClass +
+                  ' ' +
+                  row.class
+                "
+                [style]="
+                  'background-color:' +
+                  row.backGroundColor +
+                  ';color:' +
+                  row.textColor +
+                  ';'
+                "
+              >
+                <td class="py-3 px-6 whitespace-nowra font-bold relative">
+                  {{ row.title }}
+                  <div
+                    class="border-2 text-lg absolute right-5 bg-white text-gray-800 p-4 items-center rounded-full flex justify-center"
+                    style="width: 30px; height: 30px; bottom: -13px"
+                    [style]="
+                      'border-color:' +
+                      row.backGroundColor +
+                      ';color:' +
+                      row.backGroundColor +
+                      ';'
+                    "
+                  >
+                    {{ row.childs.length }}
+                  </div>
+                </td>
+                <td
+                  *ngFor="let col of row.data"
+                  class="py-3 px-6 text-left whitespace-nowrap"
+                >
+                  {{ col }}
+                </td>
+              </tr>
+              <ng-container *ngFor="let childRow of row.childs">
+                <tr
+                  [class]="getChildClassStyles(i, childRow.class, row.expanded)"
+                >
+                  <td
+                    [class]="!row.expanded ? 'rowInvis' : 'py-3  opacity-100  '"
+                    class="pr-6 pl-40 whitespace-nowra font-bold"
+                  >
+                    {{ childRow.title }}
+                  </td>
+                  <td
+                    [class]="!row.expanded ? 'rowInvis' : 'py-3  opacity-100 '"
+                    *ngFor="let childCol of childRow.data"
+                    class="px-6 text-left whitespace-nowrap"
+                  >
+                    {{ childCol }}
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
